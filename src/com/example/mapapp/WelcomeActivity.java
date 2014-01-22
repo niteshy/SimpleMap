@@ -1,5 +1,7 @@
 package com.example.mapapp;
 
+import com.example.mapapp.activity.AccelerometerActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,47 +1,68 @@
 package com.example.mapapp.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.achartengine.GraphicalView;
+
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mapapp.Globals;
 import com.example.mapapp.R;
-import com.example.mapapp.SensorData;
-import com.example.mapapp.charts.SensorChart;
+import com.example.mapapp.R.layout;
+import com.example.mapapp.charts.Graph;
 
 public class AccelerometerActivity extends Activity implements
 		SensorEventListener {
 
-	private SensorManager sensorManager;
+	private SensorManager mSensorManager;
 	private Sensor mSensor;
+	
+	private static ArrayList<Double> xd = new ArrayList<Double>();
+	private static ArrayList<Double> yd = new ArrayList<Double>();
+	private static ArrayList<Double> zd = new ArrayList<Double>();
+	
+	private LinearLayout ll;
 
-	private long timeStart = 0;
-	private long counter = 0;
-
-	SensorEvent lastEvent;
-
-	private TextView xtv, ytv, ztv;
 	private Handler handler = new Handler();
+    public boolean init = false;
+
+	Graph mGraph;
+    GraphicalView view;
+    Graph graph;
+
 
 	private Runnable showSensorData = new Runnable() {
 
 		@Override
 		public void run() {
-			SensorData sd = new SensorData(counter,
-					Globals.linear_acceleration[0],
-					Globals.linear_acceleration[1],
-					Globals.linear_acceleration[2]);
-			Globals.sensorData.add(sd);
-			Intent intent = new SensorChart().execute(AccelerometerActivity.this);
-			startActivity(intent);
-			counter++;
+			
+            xd.add(Globals.linear_acceleration[0]);
+            yd.add(Globals.linear_acceleration[1]);
+            zd.add(Globals.linear_acceleration[2]);
+
+            mGraph = new Graph(AccelerometerActivity.this);
+            mGraph.initData(xd,yd,zd);
+            mGraph.setProperties();
+            if(!init){
+                view = mGraph.getGraph();
+                ll.addView(view);
+                init = true;
+            }else{
+                ll.removeView(view);
+                view = mGraph.getGraph();
+                ll.addView(view);
+            }
+            
 			handler.postDelayed(this, 1000);
 		}
 	};
@@ -51,32 +72,13 @@ public class AccelerometerActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_accelerometer);
 
-		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		mSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-		xtv = (TextView) findViewById(R.id.xaxis);
-		ytv = (TextView) findViewById(R.id.yaxis);
-		ztv = (TextView) findViewById(R.id.zaxis);
-
-		sensorManager.registerListener(this, mSensor,
+		ll = (LinearLayout) findViewById(R.id.GraphicalView);
+		mSensorManager.registerListener(this, mSensor,
 				SensorManager.SENSOR_DELAY_NORMAL);
 		handler.post(showSensorData);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		// Register ourselves as an event listener for accelerometer events
-		sensorManager.registerListener(this, mSensor,
-				SensorManager.SENSOR_DELAY_NORMAL);
-		counter = 0;
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		// Unregister the event listener for accelerometer events
-		sensorManager.unregisterListener(this);
 	}
 
 	@Override
