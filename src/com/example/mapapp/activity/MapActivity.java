@@ -50,9 +50,8 @@ public class MapActivity extends Activity {
 						.position(
 								new LatLng(Globals.myLocation.getLatitude(),
 										Globals.myLocation.getLongitude()))
-						.title("Latitude : " + Globals.myLocation.getLatitude()
-								+ " | Longitude : "
-								+ Globals.myLocation.getLongitude())
+						.title("Location (" + Globals.myLocation.getLatitude()
+								+ ", " + Globals.myLocation.getLongitude() + ")")
 						.snippet(
 								Utils.getHumanReadableTime(Globals.myLocation
 										.getTime())));
@@ -102,8 +101,8 @@ public class MapActivity extends Activity {
 		final Marker m = googleMap
 				.addMarker(new MarkerOptions()
 						.position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()))
-						.title("Last Location Latitude : " + lastLocation.getLatitude()
-								+ " | Longitude : " + lastLocation.getLongitude())
+						.title("Last Location (" + lastLocation.getLatitude()
+								+ ", " + lastLocation.getLongitude() + ")")
 						.snippet(Utils.getHumanReadableTime(lastLocation.getTime())));
 		addAccuracyCircle(lastLocation);
 	}

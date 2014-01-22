@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MapApp</string>
+    <string name="app_name">Simple Map</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_map">Map Locator</string>
+    <string name="location_display">Location Display</string>
+    <string name="accelerometer_display">Accelerometer Display</string>
+    <string name="title_activity_map">Location Display</string>
     <string name="title_activity_accelerometer">Accelerometer Display</string>
 
 </resources>

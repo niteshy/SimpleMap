@@ -249,6 +249,7 @@ containing a value of this type.
         public static final int welcome=0x7f0a0002;
     }
     public static final class string {
+        public static final int accelerometer_display=0x7f06001e;
         public static final int action_settings=0x7f06001b;
         public static final int app_name=0x7f06001a;
         /**   Title for notification shown when GooglePlayServices needs to be
@@ -346,8 +347,9 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f060013;
         public static final int hello_world=0x7f06001c;
-        public static final int title_activity_accelerometer=0x7f06001e;
-        public static final int title_activity_map=0x7f06001d;
+        public static final int location_display=0x7f06001d;
+        public static final int title_activity_accelerometer=0x7f060020;
+        public static final int title_activity_map=0x7f06001f;
     }
     public static final class style {
         /** 
