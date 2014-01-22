@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     tools:context=".WelcomeActivity" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
     <Button
         android:id="@+id/btnMapLocation"
         android:layout_width="wrap_content"
@@ -17,6 +11,17 @@
         android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
+        android:onClick="mapClick"
         android:text="Map Location" />
+
+    <Button
+        android:id="@+id/btnAccelerometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnMapLocation"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:onClick="accelerometerClick"
+        android:text="Accelerometer Data" />
 
 </RelativeLayout>

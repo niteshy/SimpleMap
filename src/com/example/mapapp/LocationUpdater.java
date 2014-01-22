@@ -2,113 +2,72 @@ package com.example.mapapp;
 
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.util.Log;
 
-public class LocationUpdater implements LocationListener {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 
-	private LocationManager locationManager;
+public class LocationUpdater implements ConnectionCallbacks,
+                OnConnectionFailedListener, LocationListener {
 
-	public void start(Context context) {
+        private static LocationClient mLocationClient;
+        private static final String TAG = "LocationUpdater";
+        private static final LocationRequest REQUEST = LocationRequest.create()
+                        .setInterval(5000) // 5 seconds
+                        .setFastestInterval(16) // 16ms = 60fps
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-		locationManager = (LocationManager) context
-				.getSystemService(Context.LOCATION_SERVICE);
+        public void start(Context context) {
+                setUpLocationClientIfNeeded(context);
+                if (!mLocationClient.isConnected()) {
+                        mLocationClient.connect();
+                        Log.d(TAG, "mLocation Client CONNECTION INITIATE, activity->"
+                                        + context.getApplicationContext().getClass());
+                }
+        }
 
-		List<String> providers = locationManager.getProviders(false);
-		if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-			locationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, 0, 0, this);
-		}
-		if (providers.contains(LocationManager.GPS_PROVIDER)) {
-			locationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 0, 0, this);
-		}
-	}
+        public void stop() {
+                if (mLocationClient != null && mLocationClient.isConnected()) {
+                        mLocationClient.disconnect();
+                        Log.d(TAG, "mLocation Client DISCONNECTED");
+                }
+        }
 
-	@Override
-	public void onLocationChanged(Location location) {
-		Globals.myLocation = location;
-	}
+        private void setUpLocationClientIfNeeded(Context context) {
+                if (mLocationClient == null) {
+                        mLocationClient = new LocationClient(context, this, // ConnectionCallbacks
+                                        this); // OnConnectionFailedListener
+                }
+        }
 
-	@Override
-	public void onProviderDisabled(String provider) {
-	}
+        @Override
+        public void onLocationChanged(Location location) {
+                Globals.myLocation = location;
+        }
 
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
+        @Override
+        public void onConnectionFailed(ConnectionResult arg0) {
+                Log.d(TAG, "mLocation Client CONNECTION FAILED");
+        }
 
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
+        @Override
+        public void onConnected(Bundle arg0) {
+                Log.d(TAG, "mLocation Client CONNECTED");
+                mLocationClient.requestLocationUpdates(REQUEST, this); // LocationListener
+        }
 
-	public void stop() {
-		if (locationManager != null)
-			locationManager.removeUpdates(this);
-	}
+        @Override
+        public void onDisconnected() {
+        }
 
-	public boolean isLocationProviderEnabled(final Context context) {
-		boolean locationEnabled = locationManager
-				.isProviderEnabled(LocationManager.GPS_PROVIDER)
-				|| locationManager
-						.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-		if (!locationEnabled) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-			builder.setTitle("No location access");
-			builder.setMessage("Please allow to access your location. Turn it ON from Location Services");
-			builder.setCancelable(false);
-			builder.setPositiveButton("Settings",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog,
-								final int id) {
-							context.startActivity(new Intent(
-									Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-							dialog.cancel();
-						}
-					});
-			builder.setNegativeButton("No",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog,
-								final int id) {
-							dialog.cancel();
-						}
-					});
-			final AlertDialog alert = builder.create();
-			alert.show();
-			return false;
-		}
-		return true;
-	}
-
-	public boolean isLocationNonNull(final Context context) {
-		if (Globals.myLocation == null) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-			builder.setMessage("Sorry! We could not locate you. Please try again!");
-			builder.setCancelable(false);
-			builder.setPositiveButton("OK",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog,
-								final int id) {
-							dialog.cancel();
-						}
-					});
-			final AlertDialog alert = builder.create();
-			alert.show();
-			return false;
-		}
-		return true;
-	}
 
 	public static double[] getLastKnownLocation(Context context) {
 		LocationManager lm = (LocationManager) context
