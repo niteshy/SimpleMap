@@ -3,8 +3,12 @@ package com.example.mapapp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
+
+import android.util.Log;
 
 public class Utils {
+	private final String TAG = "Utils";
 
 	public static long diff(long time, int field) {
 		long fieldTime = getFieldInMillis(field);
@@ -22,29 +26,36 @@ public class Utils {
 	}
 
 	public static String getHumanReadableTime(long timestamp) {
-		Date date = new Date(timestamp * 1000);
+		Date date = new Date(timestamp);
+		Calendar cal = Calendar.getInstance();
+		TimeZone tz = cal.getTimeZone();
+		
+		
+		
 		StringBuilder sb = new StringBuilder();
 
 		SimpleDateFormat time_format = new SimpleDateFormat("hh:mm a ");
+		time_format.setTimeZone(tz);
 		SimpleDateFormat date_format = new SimpleDateFormat("EEE, dd MMM");
+		date_format.setTimeZone(tz);
 
 		sb.append(time_format.format(date) + ", ");
 
-		String pickupdaytext = null;
-		int pickuptimestatus = (int) Utils.diff(date.getTime(),
+		String daytext = null;
+		int timestatus = (int) Utils.diff(date.getTime(),
 				Calendar.DAY_OF_YEAR);
 
-		if (pickuptimestatus == 0)
-			pickupdaytext = "Today";
-		else if (pickuptimestatus == -1)
-			pickupdaytext = "Yesterday";
-		else if (pickuptimestatus == 1)
-			pickupdaytext = "Tomorrow";
+		if (timestatus == 0)
+			daytext = "Today";
+		else if (timestatus == -1)
+			daytext = "Yesterday";
+		else if (timestatus == 1)
+			daytext = "Tomorrow";
 		else {
-			pickupdaytext = date_format.format(date);
+			daytext = date_format.format(date);
 		}
 
-		sb.append(pickupdaytext);
+		sb.append(daytext);
 
 		return sb.toString();
 	}
