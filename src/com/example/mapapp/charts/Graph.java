@@ -66,6 +66,8 @@ public class Graph {
 		renderer.setChartTitle("AccelerometerData");
 
 		renderer.setAxesColor(Color.BLACK);
+		renderer.setLabelsTextSize(25);
+		renderer.setLegendTextSize(25);
 		XYSeriesRenderer renderer1 = new XYSeriesRenderer();
 		renderer1.setColor(Color.RED);
 		renderer.addSeriesRenderer(renderer1);
