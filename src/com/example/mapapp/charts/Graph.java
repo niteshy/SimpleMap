@@ -11,11 +11,17 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint.Align;
+import android.util.DisplayMetrics;
+
+import com.example.mapapp.Constants;
 
 public class Graph {
 	private Context context;
 	XYMultipleSeriesDataset dataset;
 	XYMultipleSeriesRenderer renderer;
+	
+	
 	int greater;
 	public static boolean ClickEnabled = true;
 
@@ -63,11 +69,49 @@ public class Graph {
 			renderer.setXAxisMin(greater - 100);
 			renderer.setXAxisMax(greater);
 		}
-		renderer.setChartTitle("AccelerometerData");
-
 		renderer.setAxesColor(Color.BLACK);
 		renderer.setLabelsTextSize(25);
 		renderer.setLegendTextSize(25);
+		renderer.setLabelsColor(Color.BLACK);
+		renderer.setAxesColor(Color.BLACK);
+		renderer.setGridColor(Color.BLACK);
+		renderer.setXLabelsAlign(Align.CENTER);
+		renderer.setYLabelsAlign(Align.RIGHT);
+		renderer.setShowGrid(true);
+		renderer.setShowLegend(true);
+		
+		
+		switch (context.getResources().getDisplayMetrics().densityDpi) {
+        case DisplayMetrics.DENSITY_XHIGH:
+            renderer.setMargins(new int[] { 50, 90, 40, 10 });
+			renderer.setAxisTitleTextSize(Constants.TEXT_SIZE_XHDPI);
+			renderer.setChartTitleTextSize(Constants.TEXT_SIZE_XHDPI);
+			renderer.setLabelsTextSize(Constants.TEXT_SIZE_XHDPI);
+			renderer.setLegendTextSize(Constants.TEXT_SIZE_XHDPI);
+			renderer.setLabelsTextSize(35);
+			renderer.setYLabelsPadding(10);
+			break;
+		case DisplayMetrics.DENSITY_HIGH:
+			renderer.setMargins(new int[] { 40, 50, 35, 10 });
+			renderer.setAxisTitleTextSize(Constants.TEXT_SIZE_HDPI);
+			renderer.setChartTitleTextSize(Constants.TEXT_SIZE_HDPI);
+			renderer.setLabelsTextSize(Constants.TEXT_SIZE_HDPI);
+			renderer.setLegendTextSize(Constants.TEXT_SIZE_HDPI);
+			renderer.setLabelsTextSize(25);
+			renderer.setYLabelsPadding(5);
+			break;
+		default:
+			renderer.setMargins(new int[] { 40, 50, 35, 10 });
+			renderer.setAxisTitleTextSize(Constants.TEXT_SIZE_LDPI);
+			renderer.setChartTitleTextSize(Constants.TEXT_SIZE_LDPI);
+			renderer.setLabelsTextSize(Constants.TEXT_SIZE_LDPI);
+			renderer.setLegendTextSize(Constants.TEXT_SIZE_LDPI);
+			renderer.setLabelsTextSize(25);
+			renderer.setYLabelsPadding(5);
+			break;
+		}
+		
+
 		XYSeriesRenderer renderer1 = new XYSeriesRenderer();
 		renderer1.setColor(Color.RED);
 		renderer.addSeriesRenderer(renderer1);
@@ -76,6 +120,11 @@ public class Graph {
 		renderer.addSeriesRenderer(renderer2);
 		XYSeriesRenderer renderer3 = new XYSeriesRenderer();
 		renderer3.setColor(Color.BLUE);
+
+		renderer1.setLineWidth(4);
+		renderer2.setLineWidth(4);
+		renderer3.setLineWidth(4);
+		
 		renderer.addSeriesRenderer(renderer3);
 	}
 
