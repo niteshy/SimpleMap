@@ -47,6 +47,7 @@
             android:name="com.example.mapapp.activity.AccelerometerActivity"
             android:label="@string/title_activity_accelerometer" >
         </activity>
+        <activity android:name="org.achartengine.GraphicalActivity" />
     </application>
 
 </manifest>

@@ -3,9 +3,8 @@ package com.example.mapapp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
-
-import android.util.Log;
 
 public class Utils {
 	private final String TAG = "Utils";
@@ -60,4 +59,19 @@ public class Utils {
 		return sb.toString();
 	}
 
+	public static double[] toDoubleArray(List<Double> list)  {
+	    double[] ret = new double[list.size()];
+	    int i = 0;
+	    for (Double e : list)  
+	        ret[i++] = e.doubleValue();
+	    return ret;
+	}
+	
+	public static Date[] toDateArray(List<Date> list)  {
+	    Date[] ret = new Date[list.size()];
+	    int i = 0;
+	    for (Date e : list)  
+	        ret[i++] = e;
+	    return ret;
+	}
 }
