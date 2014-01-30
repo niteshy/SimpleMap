@@ -8,10 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.example.mapapp.Globals;
 import com.example.mapapp.R;
-import com.example.mapapp.Utils;
 import com.example.mapapp.services.LocationUpdater;
+import com.example.mapapp.utils.Globals;
+import com.example.mapapp.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;

@@ -16,10 +16,10 @@ import android.os.Handler;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.mapapp.Globals;
 import com.example.mapapp.R;
 import com.example.mapapp.R.layout;
 import com.example.mapapp.charts.Graph;
+import com.example.mapapp.utils.Globals;
 
 public class AccelerometerActivity extends Activity implements
 		SensorEventListener {
@@ -89,11 +89,9 @@ public class AccelerometerActivity extends Activity implements
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-
 		Globals.linear_acceleration[0] = event.values[0];
 		Globals.linear_acceleration[1] = event.values[1];
 		Globals.linear_acceleration[2] = event.values[2];
-
 	}
 
 }

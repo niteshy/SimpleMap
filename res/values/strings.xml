@@ -8,5 +8,7 @@
     <string name="accelerometer_display">Accelerometer Display</string>
     <string name="title_activity_map">Location Display</string>
     <string name="title_activity_accelerometer">Accelerometer Display</string>
+    <string name="connected">Connected to Location Services</string>
+    <string name="disconnected">Disconnected from Location Services</string>
 
 </resources>

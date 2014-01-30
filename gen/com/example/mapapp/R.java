@@ -344,6 +344,8 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
+        public static final int connected=0x7f060021;
+        public static final int disconnected=0x7f060022;
         public static final int hello_world=0x7f06001c;
         public static final int location_display=0x7f06001d;
         public static final int title_activity_accelerometer=0x7f060020;

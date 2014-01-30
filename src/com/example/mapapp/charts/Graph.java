@@ -14,7 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.util.DisplayMetrics;
 
-import com.example.mapapp.Constants;
+import com.example.mapapp.utils.Constants;
 
 public class Graph {
 	private Context context;

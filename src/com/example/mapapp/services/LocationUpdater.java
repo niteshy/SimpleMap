@@ -8,7 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.mapapp.Globals;
+import com.example.mapapp.utils.Globals;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
