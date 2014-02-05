@@ -38,7 +38,7 @@ public class MapActivity extends Activity{
 	// The activity recognition update removal object
 	private DetectionRemover mDetectionRemover;
 
-	private Runnable updateActivity = new Runnable() {
+	private Runnable displayActivityRecoText = new Runnable() {
 
 		@Override
 		public void run() {
@@ -163,7 +163,7 @@ public class MapActivity extends Activity{
         // Pass the update request to the requester object
         mDetectionRequester.requestUpdates();
 		handler.post(updateMap);
-		handler.post(updateActivity);
+		handler.post(displayActivityRecoText);
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class MapActivity extends Activity{
 		super.onPause();
 		myLocationUpdater.stop();
 		handler.removeCallbacks(updateMap);
-		handler.removeCallbacks(updateActivity);
+		handler.removeCallbacks(displayActivityRecoText);
 		
         // Pass the remove request to the remover object
         mDetectionRemover.removeUpdates(mDetectionRequester.getRequestPendingIntent());
@@ -192,7 +192,7 @@ public class MapActivity extends Activity{
 
 
 	/**
-	 * Display the activity detection history stored in the log file
+	 * Set current activity
 	 */
 	private void updateActivityHistory() {
 		Log.d("UPDATE", "Setting Update Text = " + currentActivity);

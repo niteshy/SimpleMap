@@ -26,7 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.mapapp.services.ActivityRecognitionIntentService;
-import com.example.mapapp.utils.ActivityUtils;
+import com.example.mapapp.utils.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
@@ -99,11 +99,11 @@ public class DetectionRequester
          * The PendingIntent sends updates to ActivityRecognitionIntentService
          */
         getActivityRecognitionClient().requestActivityUpdates(
-                ActivityUtils.DETECTION_INTERVAL_MILLISECONDS,
+                Constants.DETECTION_INTERVAL_MILLISECONDS,
                 createRequestPendingIntent());
 
         // Disconnect the client
-        //requestDisconnection();
+        requestDisconnection();
     }
 
     /**
@@ -146,7 +146,7 @@ public class DetectionRequester
     @Override
     public void onConnected(Bundle arg0) {
         // If debugging, log the connection
-        Log.d(ActivityUtils.APPTAG, mContext.getString(R.string.connected));
+        Log.d(Constants.APPTAG, mContext.getString(R.string.connected));
 
         // Continue the process of requesting activity recognition updates
         continueRequestActivityUpdates();
@@ -158,7 +158,7 @@ public class DetectionRequester
     @Override
     public void onDisconnected() {
         // In debug mode, log the disconnection
-        Log.d(ActivityUtils.APPTAG, mContext.getString(R.string.disconnected));
+        Log.d(Constants.APPTAG, mContext.getString(R.string.disconnected));
 
         // Destroy the current activity recognition client
         mActivityRecognitionClient = null;
@@ -217,7 +217,7 @@ public class DetectionRequester
 
             try {
                 connectionResult.startResolutionForResult((Activity) mContext,
-                    ActivityUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                    Constants.CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
             /*
              * Thrown if Google Play services canceled the original
@@ -237,7 +237,7 @@ public class DetectionRequester
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
                             connectionResult.getErrorCode(),
                             (Activity) mContext,
-                            ActivityUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                            Constants.CONNECTION_FAILURE_RESOLUTION_REQUEST);
             if (dialog != null) {
                 dialog.show();
             }
