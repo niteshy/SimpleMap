@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mapapp.DetectionRemover;
+import com.example.mapapp.DetectionRequester;
 import com.example.mapapp.R;
 import com.example.mapapp.services.LocationUpdater;
 import com.example.mapapp.utils.Globals;
@@ -18,15 +21,34 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends Activity {
+public class MapActivity extends Activity{
 
 	private final String TAG = "MapAcitivity";
 	private GoogleMap googleMap;
 	private LocationUpdater myLocationUpdater = new LocationUpdater();
 	private Handler handler = new Handler();
+	private TextView textView1;
+	public static String currentActivity = null;
+
+	// The activity recognition update request object
+	private DetectionRequester mDetectionRequester;
+
+	// The activity recognition update removal object
+	private DetectionRemover mDetectionRemover;
+
+	private Runnable updateActivity = new Runnable() {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			updateActivityHistory();
+			handler.postDelayed(this, 3000);
+
+		}
+
+	};
 
 	private Runnable updateMap = new Runnable() {
 
@@ -40,22 +62,24 @@ public class MapActivity extends Activity {
 
 				CameraPosition cameraPosition = new CameraPosition.Builder()
 						.target(new LatLng(Globals.myLocation.getLatitude(),
-								Globals.myLocation.getLongitude())).zoom(14).build();
+								Globals.myLocation.getLongitude())).zoom(14)
+						.build();
 
-				
 				googleMap.moveCamera(CameraUpdateFactory
 						.newCameraPosition(cameraPosition));
 
-				final Marker m = googleMap.addMarker(new MarkerOptions()
+				googleMap.addMarker(new MarkerOptions()
 						.position(
 								new LatLng(Globals.myLocation.getLatitude(),
 										Globals.myLocation.getLongitude()))
 						.title("Location (" + Globals.myLocation.getLatitude()
-								+ ", " + Globals.myLocation.getLongitude() + ")")
+								+ ", " + Globals.myLocation.getLongitude()
+								+ ")")
 						.snippet(
 								Utils.getHumanReadableTime(Globals.myLocation
 										.getTime())));
 				addAccuracyCircle(Globals.myLocation);
+				updateActivityHistory();
 
 			}
 
@@ -66,7 +90,7 @@ public class MapActivity extends Activity {
 
 	private void addAccuracyCircle(Location l) {
 		CircleOptions co = new CircleOptions();
-		co.center(new LatLng(l.getLatitude(),l.getLongitude()));
+		co.center(new LatLng(l.getLatitude(), l.getLongitude()));
 		co.radius(l.getAccuracy());
 		co.fillColor(TRIM_MEMORY_BACKGROUND);
 		co.strokeColor(TRIM_MEMORY_BACKGROUND);
@@ -78,32 +102,39 @@ public class MapActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
+		textView1 = (TextView) findViewById(R.id.textView1);
 
 		try {
 			initializeMap();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		setInitialPosition();
-		handler.post(updateMap);
+		// Get detection requester and remover objects
+		mDetectionRequester = new DetectionRequester(this);
+		mDetectionRemover = new DetectionRemover(this);
 
+		setInitialPosition();
 	}
 
 	private void setInitialPosition() {
-		Location lastLocation = LocationUpdater.getLastKnownLocation(MapActivity.this);  
-		CameraPosition cameraPosition = new CameraPosition.Builder().target(
-				new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())).zoom(14).build();
+		Location lastLocation = LocationUpdater
+				.getLastKnownLocation(MapActivity.this);
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+				.target(new LatLng(lastLocation.getLatitude(), lastLocation
+						.getLongitude())).zoom(14).build();
 
 		googleMap.animateCamera(CameraUpdateFactory
 				.newCameraPosition(cameraPosition));
 
-		final Marker m = googleMap
-				.addMarker(new MarkerOptions()
-						.position(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()))
-						.title("Last Location (" + lastLocation.getLatitude()
-								+ ", " + lastLocation.getLongitude() + ")")
-						.snippet(Utils.getHumanReadableTime(lastLocation.getTime())));
+		googleMap.addMarker(new MarkerOptions()
+				.position(
+						new LatLng(lastLocation.getLatitude(), lastLocation
+								.getLongitude()))
+				.title("Last Location (" + lastLocation.getLatitude() + ", "
+						+ lastLocation.getLongitude() + ")")
+				.snippet(Utils.getHumanReadableTime(lastLocation.getTime())));
 		addAccuracyCircle(lastLocation);
 	}
 
@@ -120,8 +151,6 @@ public class MapActivity extends Activity {
 			} else {
 				googleMap.setMyLocationEnabled(true);
 			}
-			
-
 		}
 
 	}
@@ -130,12 +159,28 @@ public class MapActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		myLocationUpdater.start(MapActivity.this);
+
+        // Pass the update request to the requester object
+        mDetectionRequester.requestUpdates();
+		handler.post(updateMap);
+		handler.post(updateActivity);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		myLocationUpdater.stop();
+		handler.removeCallbacks(updateMap);
+		handler.removeCallbacks(updateActivity);
+		
+        // Pass the remove request to the remover object
+        mDetectionRemover.removeUpdates(mDetectionRequester.getRequestPendingIntent());
+
+        /*
+         * Cancel the PendingIntent. Even if the removal request fails, canceling the PendingIntent
+         * will stop the updates.
+         */
+        mDetectionRequester.getRequestPendingIntent().cancel();
 	}
 
 	@Override
@@ -145,4 +190,13 @@ public class MapActivity extends Activity {
 		return true;
 	}
 
+
+	/**
+	 * Display the activity detection history stored in the log file
+	 */
+	private void updateActivityHistory() {
+		Log.d("UPDATE", "Setting Update Text = " + currentActivity);
+		textView1.setText(currentActivity);
+
+	}
 }

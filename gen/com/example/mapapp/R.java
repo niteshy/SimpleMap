@@ -224,14 +224,14 @@ containing a value of this type.
         public static final int GraphicalView=0x7f050005;
         public static final int action_settings=0x7f05000a;
         public static final int btnAccelerometer=0x7f050009;
-        public static final int btnMapLocation=0x7f050007;
+        public static final int btnMapLocation=0x7f050008;
         public static final int hybrid=0x7f050004;
         public static final int map=0x7f050006;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
-        public static final int textView1=0x7f050008;
+        public static final int textView1=0x7f050007;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
@@ -249,6 +249,9 @@ containing a value of this type.
     public static final class string {
         public static final int accelerometer_display=0x7f06001e;
         public static final int action_settings=0x7f06001b;
+        public static final int activity_recognition_error_detail=0x7f060035;
+        public static final int activity_updates_requested=0x7f060027;
+        public static final int activity_updates_stop=0x7f060029;
         public static final int app_name=0x7f06001a;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -345,11 +348,31 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f060013;
         public static final int connected=0x7f060021;
+        public static final int connection_failed=0x7f060023;
+        public static final int date_format_error=0x7f060036;
         public static final int disconnected=0x7f060022;
         public static final int hello_world=0x7f06001c;
+        public static final int invalid_action=0x7f060031;
+        public static final int invalid_action_detail=0x7f060032;
         public static final int location_display=0x7f06001d;
+        public static final int log_file_deletion_error=0x7f060024;
+        public static final int log_filename=0x7f060037;
+        public static final int log_message=0x7f06002a;
+        public static final int logs_deleted=0x7f06002d;
+        public static final int menu_item_clearlog=0x7f06002b;
+        public static final int menu_item_showlog=0x7f06002c;
+        public static final int no_log_data=0x7f060034;
+        public static final int no_resolution=0x7f060038;
+        public static final int notification_title=0x7f060025;
+        public static final int play_services_available=0x7f060030;
+        public static final int service_not_connected=0x7f060028;
+        public static final int start_updates=0x7f06002e;
+        public static final int stop_updates=0x7f06002f;
         public static final int title_activity_accelerometer=0x7f060020;
         public static final int title_activity_map=0x7f06001f;
+        public static final int turn_on_GPS=0x7f060026;
+        public static final int unknown=0x7f060033;
+        public static final int unknown_activity_request_code=0x7f060039;
     }
     public static final class style {
         /** 
