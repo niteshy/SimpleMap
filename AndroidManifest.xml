@@ -53,6 +53,13 @@
 
         <service android:name=".services.ActivityRecognitionIntentService" >
         </service>
+        
+        <receiver android:name=".receivers.ActivityReceiver">
+      <intent-filter>
+         <action android:name="com.example.mapapp.activity.ACTION_REFRESH_STATUS_LIST">
+      </action>
+      </intent-filter>
+   </receiver>
     </application>
 
 </manifest>

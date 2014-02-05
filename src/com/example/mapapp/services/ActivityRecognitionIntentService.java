@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.mapapp.activity.MapActivity;
+import com.example.mapapp.utils.Constants;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
@@ -75,6 +76,10 @@ public class ActivityRecognitionIntentService extends IntentService {
 					+ activityName + " Confidence : " + confidence + "\n";
 			Log.d("UPDATE", str);
 			MapActivity.currentActivity = str;
+			
+			Intent intent = new Intent(Constants.ACTION_REFRESH_STATUS_LIST);
+			getApplicationContext().sendBroadcast(intent);
+			Log.i("ActivityRecognitionIntentService","broadcast is sent!");
 		}
 	}
 	

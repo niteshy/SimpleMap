@@ -1,9 +1,14 @@
 package com.example.mapapp.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -13,6 +18,7 @@ import com.example.mapapp.DetectionRemover;
 import com.example.mapapp.DetectionRequester;
 import com.example.mapapp.R;
 import com.example.mapapp.services.LocationUpdater;
+import com.example.mapapp.utils.Constants;
 import com.example.mapapp.utils.Globals;
 import com.example.mapapp.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,32 +29,28 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends Activity{
+public class MapActivity extends Activity {
 
-	private final String TAG = "MapAcitivity";
+	private final String TAG = "MapActivity";
 	private GoogleMap googleMap;
 	private LocationUpdater myLocationUpdater = new LocationUpdater();
 	private Handler handler = new Handler();
-	private TextView textView1;
+	public static TextView textView1;
 	public static String currentActivity = null;
+
+	/*
+	 * Intent filter for incoming broadcasts from the IntentService.
+	 */
+	IntentFilter mBroadcastFilter;
+
+	// Instance of a local broadcast manager
+	private LocalBroadcastManager mBroadcastManager;
 
 	// The activity recognition update request object
 	private DetectionRequester mDetectionRequester;
 
 	// The activity recognition update removal object
 	private DetectionRemover mDetectionRemover;
-
-	private Runnable displayActivityRecoText = new Runnable() {
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			updateActivityHistory();
-			handler.postDelayed(this, 3000);
-
-		}
-
-	};
 
 	private Runnable updateMap = new Runnable() {
 
@@ -111,6 +113,14 @@ public class MapActivity extends Activity{
 			e.printStackTrace();
 		}
 
+		// Set the broadcast receiver intent filer
+		mBroadcastManager = LocalBroadcastManager.getInstance(this);
+
+		// Create a new Intent filter for the broadcast receiver
+		mBroadcastFilter = new IntentFilter(
+				Constants.ACTION_REFRESH_STATUS_LIST);
+		//mBroadcastFilter.addCategory(Constants.CATEGORY_LOCATION_SERVICES);
+
 		// Get detection requester and remover objects
 		mDetectionRequester = new DetectionRequester(this);
 		mDetectionRemover = new DetectionRemover(this);
@@ -160,10 +170,16 @@ public class MapActivity extends Activity{
 		super.onResume();
 		myLocationUpdater.start(MapActivity.this);
 
-        // Pass the update request to the requester object
-        mDetectionRequester.requestUpdates();
+		// Pass the update request to the requester object
+		mDetectionRequester.requestUpdates();
 		handler.post(updateMap);
-		handler.post(displayActivityRecoText);
+
+		// Register the broadcast receiver
+		mBroadcastManager
+				.registerReceiver(updateListReceiver, mBroadcastFilter);
+
+		// Load updated activity history
+		updateActivityHistory();
 	}
 
 	@Override
@@ -171,16 +187,19 @@ public class MapActivity extends Activity{
 		super.onPause();
 		myLocationUpdater.stop();
 		handler.removeCallbacks(updateMap);
-		handler.removeCallbacks(displayActivityRecoText);
-		
-        // Pass the remove request to the remover object
-        mDetectionRemover.removeUpdates(mDetectionRequester.getRequestPendingIntent());
 
-        /*
-         * Cancel the PendingIntent. Even if the removal request fails, canceling the PendingIntent
-         * will stop the updates.
-         */
-        mDetectionRequester.getRequestPendingIntent().cancel();
+		// Pass the remove request to the remover object
+		mDetectionRemover.removeUpdates(mDetectionRequester
+				.getRequestPendingIntent());
+
+		/*
+		 * Cancel the PendingIntent. Even if the removal request fails,
+		 * canceling the PendingIntent will stop the updates.
+		 */
+		mDetectionRequester.getRequestPendingIntent().cancel();
+
+		// Stop listening to broadcasts when the Activity isn't visible.
+		mBroadcastManager.unregisterReceiver(updateListReceiver);
 	}
 
 	@Override
@@ -190,13 +209,29 @@ public class MapActivity extends Activity{
 		return true;
 	}
 
-
 	/**
 	 * Set current activity
 	 */
-	private void updateActivityHistory() {
-		Log.d("UPDATE", "Setting Update Text = " + currentActivity);
+	public void updateActivityHistory() {
+		Log.d(TAG, "Setting Update Text = " + currentActivity);
 		textView1.setText(currentActivity);
 
 	}
+
+	/**
+	 * Broadcast receiver that receives activity update intents It checks to see
+	 * if the ListView contains items. If it doesn't, it pulls in history. This
+	 * receiver is local only. It can't read broadcast Intents from other apps.
+	 */
+	BroadcastReceiver updateListReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			/*
+			 * When an Intent is received from the update listener
+			 * IntentService, update the displayed log.
+			 */
+			updateActivityHistory();
+		}
+	};
 }
